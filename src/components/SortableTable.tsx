@@ -38,6 +38,8 @@ interface IColumnConfigEntry {
   valueFormatter?: (arg0: any, arg1?: any) => any
   imageGetter?: (arg0: any) => any
   fallbackImage?: string
+  positiveGood?: boolean
+  negativeBad?: boolean
   internalLinkGetter?: (arg0: any) => string
 }
 
@@ -193,7 +195,7 @@ export default function SortableTable(props: ISortableTableProps) {
                       hover
                       onClick={(event) => handleClick(event, index)}
                       tabIndex={-1}
-                      key={`${row.name}-${row.network}`}
+                      key={`table-row-${row.symbol}-${row.index}`}
                     >
                       {columnConfig.map((columnConfigEntry, index) => {
                         return (
@@ -223,19 +225,28 @@ export default function SortableTable(props: ISortableTableProps) {
                                   {row[columnConfigEntry.valueKey]}
                                 </Link>
                               }
-                              {!columnConfigEntry?.internalLinkGetter &&
-                                <>
-                                  {columnConfigEntry.valueFormatter
-                                    ? !columnConfigEntry.valueFormatterKeyArgs ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) : ''
-                                    : row[columnConfigEntry.valueKey]
+                              <span 
+                                style={
+                                  {
+                                    ...(columnConfigEntry.numeric && columnConfigEntry.positiveGood && row[columnConfigEntry.valueKey] > 0 && {color: '#00d200'}),
+                                    ...(columnConfigEntry.numeric && columnConfigEntry.negativeBad && row[columnConfigEntry.valueKey] < 0 && {color: 'red'})
                                   }
-                                  {columnConfigEntry.valueFormatter && columnConfigEntry.valueFormatterKeyArgs
-                                    // @ts-ignore
-                                    ? columnConfigEntry.valueFormatter(...columnConfigEntry.valueFormatterKeyArgs.map(item => row[item]))
-                                    : ''
-                                  }
-                                </>
-                              }
+                                }
+                              >
+                                {!columnConfigEntry?.internalLinkGetter &&
+                                  <>
+                                    {columnConfigEntry.valueFormatter
+                                      ? !columnConfigEntry.valueFormatterKeyArgs ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) : ''
+                                      : row[columnConfigEntry.valueKey]
+                                    }
+                                    {columnConfigEntry.valueFormatter && columnConfigEntry.valueFormatterKeyArgs
+                                      // @ts-ignore
+                                      ? columnConfigEntry.valueFormatter(...columnConfigEntry.valueFormatterKeyArgs.map(item => row[item]))
+                                      : ''
+                                    }
+                                  </>
+                                }
+                              </span>
                             </div>
                           </TableCell>
                         )

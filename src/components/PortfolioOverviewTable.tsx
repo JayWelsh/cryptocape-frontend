@@ -117,6 +117,8 @@ export default function PortfolioOverviewTable(props: PropsFromRedux & IPortfoli
             valueKey: 'tokenPriceChangePercent24Hr',
             numeric: true,
             disablePadding: false,
+            positiveGood: true,
+            negativeBad: true,
             valueFormatter: (value) => priceFormat(value, 2, '%', false),
           },
           {
@@ -125,6 +127,8 @@ export default function PortfolioOverviewTable(props: PropsFromRedux & IPortfoli
             valueKey: 'relativePortfolioValueChangePercent24Hr',
             numeric: true,
             disablePadding: false,
+            positiveGood: true,
+            negativeBad: true,
             valueFormatter: (value) => priceFormat(value, 2, '%', false),
           },
         ]}

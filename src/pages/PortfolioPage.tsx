@@ -72,7 +72,6 @@ const PortfolioPage = () => {
       if(addresses) {
         let addressArray = addresses?.split(',');
         setPortfolioAddresses(addressArray);
-        console.log({addressArray})
         Promise.all([
           fetch(`${API_ENDPOINT}/balances/combined?addresses=${addresses}`).then(resp => resp.json()),
           fetch(`${API_ENDPOINT}/history/account-value-snapshot?addresses=${addresses}`).then(resp => resp.json()),
