@@ -1,0 +1,86 @@
+{
+  "name": "cryptocape-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.1.1",
+    "@mui/material": "^5.1.1",
+    "@mui/styles": "^5.1.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/d3-array": "^3.0.3",
+    "@types/d3-time-format": "^4.0.0",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/numeral": "^2.0.2",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-redux": "^7.1.16",
+    "@types/styled-components": "^5.1.0",
+    "@visx/axis": "^2.14.0",
+    "@visx/brush": "^2.12.2",
+    "@visx/curve": "^2.1.0",
+    "@visx/event": "^2.6.0",
+    "@visx/gradient": "^2.10.0",
+    "@visx/grid": "^2.12.2",
+    "@visx/group": "^2.10.0",
+    "@visx/mock-data": "^2.15.1",
+    "@visx/pattern": "^2.10.0",
+    "@visx/responsive": "^2.10.0",
+    "@visx/shape": "^2.12.2",
+    "@visx/tooltip": "^2.16.0",
+    "bignumber.js": "^9.1.1",
+    "d3-array": "^3.2.1",
+    "d3-scale": "^4.0.2",
+    "d3-time-format": "^4.1.0",
+    "ethers": "5.5.1",
+    "formik": "^2.2.9",
+    "formik-mui": "^5.0.0-alpha.0",
+    "numeral": "^2.0.6",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "6.4.5",
+    "react-spring": "^9.6.1",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-persist": "^6.0.0",
+    "sonner": "^0.2.0",
+    "styled-components": "^4.2.0",
+    "typescript": "^4.1.2",
+    "yup": "^1.0.2"
+  },
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
+  },
+  "resolutions": {
+    "d3-color": "3.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+body {
+  background-position: 0 -30vh;
+  background-repeat: no-repeat;
+  /* background-image: radial-gradient(50% 50% at 50% 50%,rgb(170 33 229 / 10%) 0,rgba(33,36,41,0) 100%); */
+  background-image: radial-gradient(50% 50% at 50% 50%,rgb(94 33 229 / 23%) 0,rgba(33,36,41,0) 100%);
+  background-color: #131313;
+  min-height: 150vh;
+}
+
+.app-root {
+  /* Saving if wanted later */
+  /* background-position: 0 30vh;
+  background-repeat: no-repeat;
+  background-image: radial-gradient(50% 50% at 50% 50%,rgb(170 33 229 / 10%) 0,rgba(33,36,41,0) 100%);
+  min-height: 100vh; */
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.hover-invert {
+  filter: invert(0);
+  transition: all 0.2s linear;
+}
+
+.hover-invert:hover {
+  filter: invert(1);
+}
+
+.hover-spin {
+  transition-property: transform;
+  transition-duration: 1s;
+}
+
+.hover-spin:hover {
+  animation-name: rotate; 
+  animation-duration: 0.2s; 
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.hover-opacity-button {
+  transition: all 0.2s linear;
+  cursor: pointer;
+  opacity: 0.6
+}
+
+.hover-opacity-button:hover {
+  opacity: 1;
+}
+
+.hover-opacity-button-subtle {
+  transition: all 0.2s linear;
+  cursor: pointer;
+  opacity: 0.8
+}
+
+.hover-opacity-button-subtle:hover {
+  opacity: 1;
+}
+
+.hover-border {
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+
+.flex-center-all {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-center-align {
+  display: flex;
+  align-items: center;
+}
+
+.graph-zone-container {
+  border: 1px solid #ffffff3b;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes rotate {
+  0% {transform: rotate(0deg);}
+  /* 25% {transform: rotate(10deg);}
+  50% {transform: rotate(0deg);}
+  75% {transform: rotate(-10deg);} */
+  100% {transform: rotate(360deg);}
+}
+
+.hover-white-border:hover {
+  border-color: white;
+}
+
+.disable-text-transform {
+  text-transform: none;
+}
+
+.disable-pointer-events {
+  pointer-events: none;
+}
+
+.width-full {
+  width: 100%;
+}
+
+.align-center {
+  display: flex;
+  justify-content: center;
+}
