@@ -41,6 +41,7 @@ interface IColumnConfigEntry {
   positiveGood?: boolean
   negativeBad?: boolean
   internalLinkGetter?: (arg0: any) => string
+  externalLinkGetter?: (arg0: any) => string
 }
 
 interface EnhancedTableProps {

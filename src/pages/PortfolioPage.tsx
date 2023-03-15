@@ -13,6 +13,8 @@ import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
+import { PropsFromRedux } from './containers/PortfolioPageContainer';
+
 import { useQuery } from '../hooks';
 
 import {
@@ -48,7 +50,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const PortfolioPage = () => {
+const PortfolioPage = (props: PropsFromRedux) => {
+
+  let {
+    isConsideredMobile,
+  } = props;
 
   const classes = useStyles();
 
@@ -153,7 +159,7 @@ const PortfolioPage = () => {
       <div className={classes.topSpacer}>
         <div style={{width: '100%'}}>
           <Card className={classes.cardContent}>
-            <Typography style={{fontSize: '7rem'}} variant="h1">
+            <Typography style={{fontSize: isConsideredMobile ? '4rem' : '7rem'}} variant="h1">
               {portfolioCurrentValue ? priceFormat(portfolioCurrentValue, 2, '$') : '...'}
             </Typography>
           </Card>

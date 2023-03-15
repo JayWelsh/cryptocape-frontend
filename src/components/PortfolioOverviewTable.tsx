@@ -25,7 +25,7 @@ import {
 // })
 
 // todo coingecko links
-// const internalLinkGetter = ((symbol: string) => `/${symbol}`)
+const externalLinkGetter = ((symbol: string) => `/${symbol}`)
 
 interface IPortfolioOverviewTable {
   portfolioOverviewData: IPortfolioOverviewData[]
@@ -68,7 +68,7 @@ export default function PortfolioOverviewTable(props: PropsFromRedux & IPortfoli
             disablePadding: false,
             // imageGetter: imageGetter,
             // fallbackImage: 'https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg',
-            // internalLinkGetter: internalLinkGetter,
+            externalLinkGetter: externalLinkGetter,
           },
           {
             id: 'portfolio-overview-table-portfolio-value-col',

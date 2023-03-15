@@ -8,8 +8,8 @@ import createStyles from '@mui/styles/createStyles';
 
 import Navigation from './Navigation';
 
-import HomePage from '../pages/HomePage';
-import PortfolioPage from '../pages/PortfolioPage';
+import HomePageContainer from '../pages/containers/HomePageContainer';
+import PortfolioPageContainer from '../pages/containers/PortfolioPageContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,8 +28,8 @@ const PageContainer = () => {
         <Navigation>
             <div className={classes.root}>
                 <Routes>
-                    <Route path="/" element={<HomePage/>} />
-                    <Route path="/portfolio" element={<PortfolioPage />} />
+                    <Route path="/" element={<HomePageContainer />} />
+                    <Route path="/portfolio" element={<PortfolioPageContainer />} />
                 </Routes>
             </div>
         </Navigation>
