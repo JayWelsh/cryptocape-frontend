@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography';
 
 import { PropsFromRedux } from './containers/PortfolioPageContainer';
 
+import LoadingIconContainer from '../containers/LoadingIconContainer';
+
 import { useQuery } from '../hooks';
 
 import {
@@ -28,7 +30,10 @@ import {
   IBalancesCombinedResponse,
 } from '../interfaces';
 
-import { priceFormat } from '../utils';
+import { 
+  priceFormat, 
+  // sleep,
+} from '../utils';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 import PortfolioOverviewTableContainer from '../containers/PortfolioOverviewTableContainer';
@@ -45,15 +50,46 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardContent: {
       padding: theme.spacing(4),
-      textAlign: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
   }),
 );
+
+const getTitleFontSize = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
+  if(isConsideredMobile) {
+    return '2rem';
+  } else if(isConsideredMedium) {
+    return '4rem';
+  }
+  return '7rem';
+}
+
+const getTitleFontBoxHeight = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
+  if(isConsideredMobile) {
+    return '104px';
+  } else if(isConsideredMedium) {
+    return '141px';
+  }
+  return '197px';
+}
+
+const getTitleLoadingIconHeight = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
+  if(isConsideredMobile) {
+    return 18;
+  } else if(isConsideredMedium) {
+    return 25;
+  }
+  return 30;
+}
 
 const PortfolioPage = (props: PropsFromRedux) => {
 
   let {
     isConsideredMobile,
+    isConsideredMedium,
+    // setLoadingProgress,
   } = props;
 
   const classes = useStyles();
@@ -78,10 +114,11 @@ const PortfolioPage = (props: PropsFromRedux) => {
       if(addresses) {
         let addressArray = addresses?.split(',');
         setPortfolioAddresses(addressArray);
+        // setLoadingProgress(1);
         Promise.all([
           fetch(`${API_ENDPOINT}/balances/combined?addresses=${addresses}`).then(resp => resp.json()),
           fetch(`${API_ENDPOINT}/history/account-value-snapshot?addresses=${addresses}`).then(resp => resp.json()),
-        ]).then((data) => {
+        ]).then(async (data) => {
           const [currentDataResponse, historicalDataResponse] = data;
           const { data: currentData } : IBalancesCombinedResponse = currentDataResponse;
           const { data: historicalData } = historicalDataResponse;
@@ -110,7 +147,10 @@ const PortfolioPage = (props: PropsFromRedux) => {
             setPortfolioTimeseries(timeseriesData);
             setLastUpdateTimestamp(new Date().getTime());
             setPortfolioOverviewData(newPortfolioOverviewData);
+            // setLoadingProgress(100);
             setIsLoading(false);
+            // await sleep(1000);
+            // setLoadingProgress(0);
           }
         })
       }
@@ -118,6 +158,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
     refreshPortfolio();
     return () => {
       isMounted = false;
+      // setLoadingProgress(0);
     }
   }, [addresses, fetchIndex])
 
@@ -140,7 +181,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
   return (
     <Container maxWidth="xl">
       {portfolioTimeseries &&
-        <div className={classes.topSpacer}>
+        <div className={(isConsideredMobile || isConsideredMedium) ? classes.sectionSpacer : classes.topSpacer}>
           <div style={{width: '100%'}}>
             <BasicAreaChartContainer
               chartData={portfolioTimeseries}
@@ -156,12 +197,17 @@ const PortfolioPage = (props: PropsFromRedux) => {
           </div>
         </div>
       }
-      <div className={classes.topSpacer}>
+      <div className={(isConsideredMobile || isConsideredMedium) ? classes.sectionSpacer : classes.topSpacer}>
         <div style={{width: '100%'}}>
-          <Card className={classes.cardContent}>
-            <Typography style={{fontSize: isConsideredMobile ? '4rem' : '7rem'}} variant="h1">
-              {portfolioCurrentValue ? priceFormat(portfolioCurrentValue, 2, '$') : '...'}
-            </Typography>
+          <Card className={classes.cardContent} style={{overflowX: 'auto', ...(!portfolioCurrentValue && { height: getTitleFontBoxHeight(isConsideredMobile, isConsideredMedium)})}}>
+            {portfolioCurrentValue 
+              ? 
+                <Typography style={{fontSize: getTitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h1">
+                  { priceFormat(portfolioCurrentValue, 2, '$') }
+                </Typography>
+              : 
+                <LoadingIconContainer height={getTitleLoadingIconHeight(isConsideredMobile, isConsideredMedium)}/>
+            }
           </Card>
         </div>
       </div>

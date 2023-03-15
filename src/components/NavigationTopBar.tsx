@@ -134,17 +134,16 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
           {/* <div style={{width: '115px', position: 'relative', marginRight: '15px', alignSelf: 'start'}}>
             <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
           </div> */}
-          
-          {springs.map((spring, index) => 
-            index === 0 
-            ? 
-              <animated.img key={`logo-easter-egg-${index}`} onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} onMouseDown={() => setLogoClickHold(true)} onMouseUp={() => setLogoClickHold(false)} style={{...spring, cursor: 'pointer', zIndex: springLength + 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-            : 
-            <Fragment key={`logo-easter-egg-${index}-1`}>
-              <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...spring, cursor: 'pointer', position: 'absolute', zIndex: springLength - index, opacity: 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-              <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...inverseSprings[index], cursor: 'pointer', position: 'absolute', zIndex: springLength - index, opacity: 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-            </Fragment>
-          )}
+          <animated.img key={`logo-easter-egg-${0}`} onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} onMouseDown={() => setLogoClickHold(true)} onMouseUp={() => setLogoClickHold(false)} style={{...springs[0], cursor: 'pointer', zIndex: springLength + 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+          <div style={{position: 'absolute', height: 40, opacity: 0.7}}>
+            {springs.map((spring, index) => 
+              index > 0 &&
+              <Fragment key={`logo-easter-egg-${index}-1`}>
+                <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...spring, cursor: 'pointer', position: 'absolute', zIndex: springLength - index, opacity: 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+                <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...inverseSprings[index], cursor: 'pointer', position: 'absolute', zIndex: springLength - index, opacity: 1}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+              </Fragment>
+            )}
+          </div>
           <div className={classes.flexer}/>
           {!isConsideredMobile &&
             <div className={"flex-center-all"}>

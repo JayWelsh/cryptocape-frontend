@@ -21,18 +21,27 @@ declare module '@mui/styles/defaultTheme' {
 
 const App = (props: PropsFromRedux) => {
 
-  const { setConsideredMobile } = props;
+  const { 
+    setConsideredMobile,
+    setConsideredMedium,
+  } = props;
 
   const windowSize = useWindowSize();
 
   useLayoutEffect(() => {
     let sizeConsiderMobile = 680;
+    let sizeConsideredMedium = 1000;
     if (windowSize.width && (windowSize.width <= sizeConsiderMobile)) {
       setConsideredMobile(true);
     }else{
       setConsideredMobile(false);
     }
-  }, [windowSize.width, windowSize.height, setConsideredMobile])
+    if (windowSize.width && (windowSize.width <= sizeConsideredMedium)) {
+      setConsideredMedium(true);
+    }else{
+      setConsideredMedium(false);
+    }
+  }, [windowSize.width, windowSize.height, setConsideredMobile, setConsideredMedium])
 
   const theme = React.useMemo(
     () =>

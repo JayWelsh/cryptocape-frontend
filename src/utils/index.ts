@@ -141,6 +141,10 @@ export const multiplyNumbers = (value1: number | string, value2: number | string
 
 export const divideNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).dividedBy(BigNumber(value2)).toString();
 
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const debounce = (
 	func: () => void,
 	wait: number,

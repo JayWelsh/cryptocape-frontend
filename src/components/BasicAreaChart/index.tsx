@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
 
-import { animated, useSpring, config } from '@react-spring/web'
-
 import BigNumber from 'bignumber.js';
 
 import { Theme } from '@mui/material/styles';
@@ -12,7 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 
-import LogoDarkMode from '../../assets/png/logo.png'
+import LoadingIconContainer from '../../containers/LoadingIconContainer';
 
 import BasicAreaChartInner from './BasicAreaChartInner'
 import BrushChart from '../BrushChart';
@@ -99,18 +97,6 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
     useEffect(() => {
       setFilteredChartData(chartData);
     }, [chartData])
-
-    const loadingSpring = useSpring({
-      from: {
-        rotate: '0deg',
-      },
-      to: {
-        rotate: "360deg",
-      },
-      loop: true,
-      delay: 150,
-      config: config.wobbly,
-    })
 
     const getChange = (firstValue: number, lastValue: number) => {
       let returnString = "+ 0.00 %"
@@ -205,10 +191,10 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
         </div>
         {loading &&
           <div style={{height: 465, width: '100%'}} className={classes.loadingIconContainer}>
-            <animated.img style={loadingSpring} className={classes.loadingIcon} src={LogoDarkMode} alt="loading icon" />
+            <LoadingIconContainer />
           </div>
         }
-        <ParentSize debounceTime={10}>
+        <ParentSize style={{...(loading && { opacity: 0.6 })}} debounceTime={10}>
           {({ width: w }) => {
             return (
               <>

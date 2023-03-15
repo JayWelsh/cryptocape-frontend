@@ -1,6 +1,9 @@
 import { connect, ConnectedProps } from 'react-redux';
 
-import { setConsideredMobile } from '../state/actions';
+import { 
+    setConsideredMobile,
+    setConsideredMedium,
+} from '../state/actions';
 
 import App from '../components/App';
 
@@ -15,7 +18,8 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = {
-    setConsideredMobile
+    setConsideredMobile,
+    setConsideredMedium,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps)
