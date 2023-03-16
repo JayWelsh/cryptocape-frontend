@@ -29,6 +29,7 @@ export interface IBalancesCombinedAssetRecordResponse {
     market_cap_usd: string
     volume_24hr_usd: string
     change_24hr_usd_percent: string
+    coingecko_id: false | string
 }
 
 export interface IBalancesCombinedResponseData {
@@ -47,6 +48,7 @@ export interface IPortfolioOverviewData {
     marketCap: number;
     tokenQuantity: number;
     portfolioPortion: number;
+    coingeckoId: false | string;
     tokenPriceChangePercent24Hr: number;
     relativePortfolioValueChangePercent24Hr: number;
 }

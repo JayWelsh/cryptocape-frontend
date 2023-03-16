@@ -14,6 +14,8 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import { Link } from "react-router-dom";
 
+import { ExternalLink } from './ExternalLink';
+
 type Order = 'asc' | 'desc';
 
 function sortData(array: any[], columnConfig: IColumnConfigEntry[], order: 'asc' | 'desc', orderBy: string) {
@@ -35,13 +37,14 @@ interface IColumnConfigEntry {
   valueFormatterKeyArgs?: string[],
   numeric: boolean
   disablePadding: boolean
-  valueFormatter?: (arg0: any, arg1?: any) => any
+  valueFormatter?: (...args: any[]) => any
   imageGetter?: (arg0: any) => any
   fallbackImage?: string
   positiveGood?: boolean
   negativeBad?: boolean
-  internalLinkGetter?: (arg0: any) => string
-  externalLinkGetter?: (arg0: any) => string
+  internalLinkGetter?: (...args: any[]) => string
+  externalLinkGetter?: (...args: any[]) => string | false
+  externalLinkGetterKeyArgs?: string[],
 }
 
 interface EnhancedTableProps {
@@ -226,6 +229,12 @@ export default function SortableTable(props: ISortableTableProps) {
                                   {row[columnConfigEntry.valueKey]}
                                 </Link>
                               }
+                              {
+                                columnConfigEntry?.externalLinkGetter && columnConfigEntry.externalLinkGetterKeyArgs && columnConfigEntry.externalLinkGetter(...columnConfigEntry.externalLinkGetterKeyArgs.map(item => row[item])) &&
+                                <ExternalLink style={{color: '#e04dffd9'}} href={columnConfigEntry.externalLinkGetter(...columnConfigEntry.externalLinkGetterKeyArgs.map(item => row[item])) || ''}>
+                                  {row[columnConfigEntry.valueKey]}
+                                </ExternalLink>
+                              }
                               <span 
                                 style={
                                   {
@@ -234,14 +243,13 @@ export default function SortableTable(props: ISortableTableProps) {
                                   }
                                 }
                               >
-                                {!columnConfigEntry?.internalLinkGetter &&
+                                {!columnConfigEntry?.internalLinkGetter && (!columnConfigEntry?.externalLinkGetter || (columnConfigEntry.externalLinkGetterKeyArgs && !columnConfigEntry.externalLinkGetter(...columnConfigEntry.externalLinkGetterKeyArgs.map(item => row[item])))) &&
                                   <>
                                     {columnConfigEntry.valueFormatter
                                       ? !columnConfigEntry.valueFormatterKeyArgs ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) : ''
                                       : row[columnConfigEntry.valueKey]
                                     }
                                     {columnConfigEntry.valueFormatter && columnConfigEntry.valueFormatterKeyArgs
-                                      // @ts-ignore
                                       ? columnConfigEntry.valueFormatter(...columnConfigEntry.valueFormatterKeyArgs.map(item => row[item]))
                                       : ''
                                     }

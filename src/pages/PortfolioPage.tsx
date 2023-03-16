@@ -133,6 +133,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
             marketCap: Number(tokenDetails.market_cap_usd),
             tokenQuantity: new BigNumber(utils.formatUnits(tokenDetails.balance, tokenDetails.token_decimals)).toNumber(),
             portfolioPortion: Number(tokenDetails.percentage_of_total),
+            coingeckoId: tokenDetails.coingecko_id ? tokenDetails.coingecko_id : false,
             tokenPriceChangePercent24Hr: Number(tokenDetails.change_24hr_usd_percent),
             relativePortfolioValueChangePercent24Hr: (Number(tokenDetails.change_24hr_usd_percent) / 100) * Number(tokenDetails.percentage_of_total),
           }))
