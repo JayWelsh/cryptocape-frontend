@@ -126,17 +126,46 @@ const PortfolioPage = (props: PropsFromRedux) => {
             value: Number(historicalEntry.value),
             date: historicalEntry.timestamp
           }));
-          let newPortfolioOverviewData : IPortfolioOverviewData[] = Object.entries(currentData.assetAddressToValue).map(([tokenAddress, tokenDetails]) => ({
-            symbol: tokenDetails.symbol,
-            tokenPrice: Number(tokenDetails.token_price),
-            portfolioValue: Number(tokenDetails.value),
-            marketCap: Number(tokenDetails.market_cap_usd),
-            tokenQuantity: new BigNumber(utils.formatUnits(tokenDetails.balance, tokenDetails.token_decimals)).toNumber(),
-            portfolioPortion: Number(tokenDetails.percentage_of_total),
-            coingeckoId: tokenDetails.coingecko_id ? tokenDetails.coingecko_id : false,
-            tokenPriceChangePercent24Hr: Number(tokenDetails.change_24hr_usd_percent),
-            relativePortfolioValueChangePercent24Hr: (Number(tokenDetails.change_24hr_usd_percent) / 100) * Number(tokenDetails.percentage_of_total),
-          }))
+          let totalValues : IPortfolioOverviewData = {
+            symbol: 'Total',
+            tokenPrice: 0,
+            portfolioValue: 0,
+            marketCap: 0,
+            tokenQuantity: 0,
+            portfolioPortion: 100,
+            coingeckoId: false,
+            tokenPriceChangePercent24Hr: 0,
+            relativePortfolioValueChangePercent24Hr: 0,
+          }
+          let newPortfolioOverviewData : IPortfolioOverviewData[] = Object.entries(currentData.assetAddressToValue).map(([tokenAddress, tokenDetails]) => {
+            let tokenPriceField : number = Number(tokenDetails.token_price);
+            let portfolioValueField : number = Number(tokenDetails.value);
+            let marketCapField : number = Number(tokenDetails.market_cap_usd);
+            let tokenQuantityField : number = new BigNumber(utils.formatUnits(tokenDetails.balance, tokenDetails.token_decimals)).toNumber();
+            let portfolioPortionField : number = Number(tokenDetails.percentage_of_total);
+            let tokenPriceChangePercent24HrField : number = Number(tokenDetails.change_24hr_usd_percent);
+            let relativePortfolioValueChangePercent24HrField : number = (Number(tokenDetails.change_24hr_usd_percent) / 100) * Number(tokenDetails.percentage_of_total);
+
+            totalValues.tokenPrice += tokenPriceField;
+            totalValues.portfolioValue += portfolioValueField;
+            totalValues.marketCap += marketCapField;
+            totalValues.tokenQuantity += tokenQuantityField;
+            totalValues.tokenPriceChangePercent24Hr += tokenPriceChangePercent24HrField;
+            totalValues.relativePortfolioValueChangePercent24Hr += relativePortfolioValueChangePercent24HrField;
+
+            return {
+              symbol: tokenDetails.symbol,
+              tokenPrice: tokenPriceField,
+              portfolioValue: portfolioValueField,
+              marketCap: marketCapField,
+              tokenQuantity: tokenQuantityField,
+              portfolioPortion: portfolioPortionField,
+              coingeckoId: tokenDetails.coingecko_id ? tokenDetails.coingecko_id : false,
+              tokenPriceChangePercent24Hr: tokenPriceChangePercent24HrField,
+              relativePortfolioValueChangePercent24Hr: relativePortfolioValueChangePercent24HrField,
+            }
+          })
+          newPortfolioOverviewData.push(totalValues);
           if(isMounted) {
             if(currentData?.total) {
               setPortfolioCurrentValue(Number(currentData?.total));
