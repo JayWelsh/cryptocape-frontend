@@ -107,6 +107,10 @@ const PortfolioPage = (props: PropsFromRedux) => {
   const [currentTimestamp, setCurrentTimestamp] = useState(new Date().getTime());
   const [fetchIndex, setFetchIndex] = useState(0);
 
+  let secondsSinceUpdate = Math.floor(currentTimestamp / 1000) - Math.floor(lastUpdateTimestamp / 1000);
+
+  const autoUpdatePeriod = 30;
+
   useEffect(() => {
     let isMounted = true;
     const refreshPortfolio = async () => {
@@ -193,20 +197,32 @@ const PortfolioPage = (props: PropsFromRedux) => {
   }, [addresses, fetchIndex])
 
   useEffect(() => {
-      const priceExpirySeconds = 30;
 
-      const timetrackerIntervalId = setInterval(() => {
-          setCurrentTimestamp(new Date().getTime());
-          let secondsSinceLastUpdate = Number(((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0));
-          if(secondsSinceLastUpdate > 0) {
-              if(secondsSinceLastUpdate % priceExpirySeconds === 0) {
-                  setFetchIndex(fetchIndex + 1);
-              }
-          }
-      }, 1000);
+    const timetrackerIntervalId = setInterval(() => {
+      setCurrentTimestamp(new Date().getTime());
+      let secondsSinceLastUpdate = Number(((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0));
+      if(secondsSinceLastUpdate > 0) {
+        if((secondsSinceLastUpdate % autoUpdatePeriod === 0) && !isLoading) {
+          setFetchIndex(fetchIndex + 1);
+        }
+      }
+    }, 1000);
 
-      return () => clearInterval(timetrackerIntervalId);
+    return () => clearInterval(timetrackerIntervalId);
   });
+
+  useEffect(() => {
+    let isMounted = true;
+    if ((secondsSinceUpdate > autoUpdatePeriod) && !isLoading) {
+      let secondsUntilNextAutoUpdate = autoUpdatePeriod - (secondsSinceUpdate % autoUpdatePeriod);
+      if(secondsSinceUpdate && (secondsUntilNextAutoUpdate >= 3) && isMounted) {
+        setFetchIndex(fetchIndex + 1);
+      }
+    }
+    return () => {
+      isMounted = false;
+    }
+  }, [secondsSinceUpdate, fetchIndex, isLoading])
 
   return (
     <Container maxWidth="xl">
