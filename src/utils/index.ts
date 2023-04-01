@@ -1,6 +1,10 @@
 import numeral from "numeral";
 import BigNumber from 'bignumber.js';
 
+import {
+	ITimeseriesEntry
+} from '../interfaces';
+
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 export const centerShortenLongString = (string: string, maxLength: number) => {
@@ -200,3 +204,20 @@ export const debounce = (
 // 	const parseDate = timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 // 	return 
 // }
+
+export const findFirstIndexBeyondDate = (data: ITimeseriesEntry[], date: Date): number => {
+  let start = 0;
+  let end = data.length - 1;
+  let mid = Math.floor((start + end) / 2);
+
+  while (start <= end) {
+    if (new Date(data[mid].date).getTime() <= new Date(date).getTime()) {
+      start = mid + 1;
+    } else {
+      end = mid - 1;
+    }
+    mid = Math.floor((start + end) / 2);
+  }
+
+  return mid;
+}

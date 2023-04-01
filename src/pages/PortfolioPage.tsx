@@ -12,6 +12,7 @@ import createStyles from '@mui/styles/createStyles';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 import { PropsFromRedux } from './containers/PortfolioPageContainer';
 
@@ -31,8 +32,9 @@ import {
 } from '../interfaces';
 
 import { 
-  priceFormat, 
-  // sleep,
+  priceFormat,
+  sleep,
+  findFirstIndexBeyondDate,
 } from '../utils';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
@@ -54,6 +56,15 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center'
     },
+    periodListContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: theme.spacing(2),
+    },
+    periodListButton: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    }
   }),
 );
 
@@ -84,6 +95,37 @@ const getTitleLoadingIconHeight = (isConsideredMobile: boolean, isConsideredMedi
   return 30;
 }
 
+const selectedPeriodList = [
+  {
+    label: '1 D',
+    value: 24,
+  },
+  {
+    label: '1 W',
+    value: 24 * 7,
+  },
+  {
+    label: '1 M',
+    value: 24 * 31,
+  },
+  {
+    label: '3 M',
+    value: 24 * 31 * 3,
+  },
+  {
+    label: '6 M',
+    value: 24 * 31 * 6,
+  },
+  {
+    label: '1 Y',
+    value: 24 * 31 * 12,
+  },
+  // {
+  //   label: 'ALL',
+  //   value: 0,
+  // },
+]
+
 const PortfolioPage = (props: PropsFromRedux) => {
 
   let {
@@ -106,6 +148,9 @@ const PortfolioPage = (props: PropsFromRedux) => {
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(new Date().getTime());
   const [currentTimestamp, setCurrentTimestamp] = useState(new Date().getTime());
   const [fetchIndex, setFetchIndex] = useState(0);
+  const [selectedPeriodHours, setSelectedPeriodHours] = useState(0);
+  const [timeseriesHoursWorth, setTimeseriesHoursWorth] = useState(0);
+  const [earliestSelectedIndex, setEarliestSelectedIndex] = useState(0);
 
   let secondsSinceUpdate = Math.floor(currentTimestamp / 1000) - Math.floor(lastUpdateTimestamp / 1000);
 
@@ -119,10 +164,11 @@ const PortfolioPage = (props: PropsFromRedux) => {
         let addressArray = addresses?.split(',');
         setPortfolioAddresses(addressArray);
         // setLoadingProgress(1);
-        Promise.all([
+        await Promise.all([
           fetch(`${API_ENDPOINT}/balances/combined?addresses=${addresses}`).then(resp => resp.json()),
           fetch(`${API_ENDPOINT}/history/account-value-snapshot?addresses=${addresses}`).then(resp => resp.json()),
-        ]).then(async (data) => {
+        ]).then(async (data: any) => {
+          console.log(data)
           const [currentDataResponse, historicalDataResponse] = data;
           const { data: currentData } : IBalancesCombinedResponse = currentDataResponse;
           const { data: historicalData } = historicalDataResponse;
@@ -170,6 +216,10 @@ const PortfolioPage = (props: PropsFromRedux) => {
             }
           })
           newPortfolioOverviewData.push(totalValues);
+          let hoursWorthOfTimeseriesData = 0;
+          if(timeseriesData?.length > 0) {
+            hoursWorthOfTimeseriesData = ((new Date().getTime() - new Date(timeseriesData[0].date).getTime()) / (1000)) / 60 / 60;
+          }
           if(isMounted) {
             if(currentData?.total) {
               setPortfolioCurrentValue(Number(currentData?.total));
@@ -181,11 +231,14 @@ const PortfolioPage = (props: PropsFromRedux) => {
             setPortfolioTimeseries(timeseriesData);
             setLastUpdateTimestamp(new Date().getTime());
             setPortfolioOverviewData(newPortfolioOverviewData);
+            setTimeseriesHoursWorth(hoursWorthOfTimeseriesData);
             // setLoadingProgress(100);
             setIsLoading(false);
             // await sleep(1000);
             // setLoadingProgress(0);
           }
+        }).catch(async (e) => {
+          setIsLoading(false);
         })
       }
     }
@@ -198,18 +251,34 @@ const PortfolioPage = (props: PropsFromRedux) => {
 
   useEffect(() => {
 
-    const timetrackerIntervalId = setInterval(() => {
+    let isMounted = true;
+
+    const timetrackerIntervalId = setInterval(async () => {
       setCurrentTimestamp(new Date().getTime());
       let secondsSinceLastUpdate = Number(((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0));
       if(secondsSinceLastUpdate > 0) {
         if((secondsSinceLastUpdate % autoUpdatePeriod === 0) && !isLoading) {
-          setFetchIndex(fetchIndex + 1);
+          await sleep(500);
+          if(isMounted) {
+            setFetchIndex(fetchIndex + 1);
+          }
         }
       }
     }, 1000);
 
-    return () => clearInterval(timetrackerIntervalId);
+    return () => {
+      clearInterval(timetrackerIntervalId)
+      isMounted = false;
+    };
   });
+
+  useEffect(() => {
+    if((selectedPeriodHours > 0) && (portfolioTimeseries?.length > 0)) {
+      let startDate = new Date(new Date().getTime() - (selectedPeriodHours * 60 * 60 * 1000))
+      let indexOfEarliestRecord = findFirstIndexBeyondDate(portfolioTimeseries, startDate);
+      setEarliestSelectedIndex(indexOfEarliestRecord);
+    }
+  }, [selectedPeriodHours, portfolioTimeseries])
 
   useEffect(() => {
     let isMounted = true;
@@ -229,6 +298,36 @@ const PortfolioPage = (props: PropsFromRedux) => {
       {portfolioTimeseries &&
         <div className={(isConsideredMobile || isConsideredMedium) ? classes.sectionSpacer : classes.topSpacer}>
           <div style={{width: '100%'}}>
+            {(selectedPeriodList && timeseriesHoursWorth) ?
+                <div className={classes.periodListContainer}>
+                  {selectedPeriodList.map((entry, index) => 
+                    (entry.value < timeseriesHoursWorth) ?
+                      <Button
+                        key={`select-period-button-${index}-${entry.value}`}
+                        color={entry.value === selectedPeriodHours ? "limegreen" : "passive"}
+                        onClick={() => setSelectedPeriodHours(entry.value)}
+                        className={classes.periodListButton}
+                        variant="outlined"
+                      >
+                        {entry.label}
+                      </Button>
+                    : null
+                  )}
+                </div>
+              : null
+            }
+            {!timeseriesHoursWorth &&
+              <div className={classes.periodListContainer}>
+                  <Button
+                    color={"passive"}
+                    disabled={true}
+                    className={classes.periodListButton}
+                    variant="outlined"
+                  >
+                  ...
+                </Button>
+              </div>
+            }
             <BasicAreaChartContainer
               chartData={portfolioTimeseries}
               loading={isLoading}
@@ -239,6 +338,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
               changeType={"up-good"}
               height={500}
               formatValueFn={(value: any) => priceFormat(value, 2, "$")}
+              earliestSelectedIndex={earliestSelectedIndex}
             />
           </div>
         </div>

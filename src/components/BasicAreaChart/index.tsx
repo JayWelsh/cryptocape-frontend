@@ -65,7 +65,8 @@ interface IBasicAreaChartProps {
   formatValueFn: (arg1: string | number) => string,
   rightTextFormatValueFn?: (arg1: string | number) => string,
   hideTime?: boolean,
-  isConsideredMobile: boolean
+  isConsideredMobile: boolean,
+  earliestSelectedIndex: number,
 }
 
 const neutralColor = "#ff14fc";
@@ -87,6 +88,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
       formatValueFn,
       isConsideredMobile,
       hideTime,
+      earliestSelectedIndex,
       loading,
     } = props;
 
@@ -220,6 +222,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                         timeseries={(chartData && chartData.length > 0) ? chartData : placeholderData}
                         isLoadingPlaceholder={(chartData && chartData.length > 0) ? false : true}
                         setFilteredChartData={setFilteredChartData}
+                        earliestSelectedIndex={earliestSelectedIndex}
                         height={100}
                         width={w}
                       />

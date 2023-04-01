@@ -1,8 +1,8 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { scaleLinear, scaleTime } from "d3-scale";
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
-import BaseBrush from '@visx/brush/lib/BaseBrush';
+import BaseBrush, {  UpdateBrush, BaseBrushState } from '@visx/brush/lib/BaseBrush';
 import { PatternLines } from '@visx/pattern';
 import { Group } from '@visx/group';
 import { min, max, extent } from 'd3-array';
@@ -49,6 +49,7 @@ export type BrushProps = {
   timeseries: ITimeseries[]
   setFilteredChartData?: (arg0: ITimeseries[]) => void
   isLoadingPlaceholder?: boolean
+  earliestSelectedIndex: number
 };
 
 function BrushChart({
@@ -64,6 +65,7 @@ function BrushChart({
     right: 0,
   },
   isLoadingPlaceholder,
+  earliestSelectedIndex,
 }: BrushProps) {
   const brushRef = useRef<BaseBrush | null>(null);
 
@@ -106,6 +108,43 @@ function BrushChart({
     }),
     [brushDateScale, timeseries],
   );
+
+  const timeboxedBrushPosition = useMemo(
+    () => ({
+      start: { x: brushDateScale(getDate(timeseries[earliestSelectedIndex])) },
+      end: { x: brushDateScale(getDate(timeseries[timeseries.length - 1])) },
+    }),
+    [earliestSelectedIndex, timeseries, brushDateScale],
+  );
+
+  useEffect(() => {
+    if(earliestSelectedIndex && setFilteredChartData) {
+      const stockCopy = timeseries.filter((s, index) => {
+        return index >= earliestSelectedIndex
+      });
+      if(stockCopy.length >= 1) {
+        setFilteredChartData(stockCopy);
+        const updater: UpdateBrush = (prevBrush) => {
+          const newExtent = brushRef.current!.getExtent(
+            timeboxedBrushPosition.start,
+            timeboxedBrushPosition.end,
+          );
+  
+          const newState: BaseBrushState = {
+            ...prevBrush,
+            start: { y: newExtent.y0, x: newExtent.x0 },
+            end: { y: newExtent.y1, x: newExtent.x1 },
+            extent: newExtent,
+          };
+  
+          return newState;
+        };
+        if(brushRef?.current) {
+          brushRef.current.updateBrush(updater);
+        }
+      }
+    }
+  }, [earliestSelectedIndex, timeseries, setFilteredChartData, timeboxedBrushPosition])
 
   return (
     <div>

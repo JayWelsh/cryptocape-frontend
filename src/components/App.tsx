@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Toaster } from 'sonner'
 
-import { createTheme, StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, StyledEngineProvider, Theme, ThemeProvider, PaletteColorOptions } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import '../styles/App.css';
@@ -18,6 +18,27 @@ declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
+
+declare module '@mui/material/styles' {
+  interface CustomPalette {
+    passive: PaletteColorOptions;
+    limegreen: PaletteColorOptions;
+  }
+  interface Palette extends CustomPalette {}
+  interface PaletteOptions extends CustomPalette {}
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    passive: true;
+    limegreen: true;
+  }
+}
+
+const { palette } = createTheme();
+const { augmentColor } = palette;
+
+const createColor = (mainColor: string) => augmentColor({ color: { main: mainColor } });
 
 const App = (props: PropsFromRedux) => {
 
@@ -54,6 +75,8 @@ const App = (props: PropsFromRedux) => {
           secondary: {
             main: '#e04dffd9',
           },
+          passive: createColor('#FFFFFF'),
+          limegreen: createColor('#32cd32'),
           ...(props.darkMode && {
             background: {
               default: "#131313",
