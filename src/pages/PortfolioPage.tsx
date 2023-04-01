@@ -298,7 +298,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
       {portfolioTimeseries &&
         <div className={(isConsideredMobile || isConsideredMedium) ? classes.sectionSpacer : classes.topSpacer}>
           <div style={{width: '100%'}}>
-            {(selectedPeriodList && timeseriesHoursWorth) ?
+            {(selectedPeriodList && timeseriesHoursWorth && !isConsideredMobile) ?
                 <div className={classes.periodListContainer}>
                   {selectedPeriodList.map((entry, index) => 
                     (entry.value < timeseriesHoursWorth) ?
@@ -316,7 +316,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
                 </div>
               : null
             }
-            {!timeseriesHoursWorth &&
+            {!timeseriesHoursWorth && !isConsideredMobile &&
               <div className={classes.periodListContainer}>
                   <Button
                     color={"passive"}
