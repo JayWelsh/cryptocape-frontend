@@ -293,6 +293,8 @@ const PortfolioPage = (props: PropsFromRedux) => {
     }
   }, [secondsSinceUpdate, fetchIndex, isLoading])
 
+  let secondsAgo = (Number(((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0)) > 0 ? ((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0) : 0);
+
   return (
     <Container maxWidth="xl">
       {portfolioTimeseries &&
@@ -359,7 +361,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
       </div>
       <div className={classes.sectionSpacer}>
         <Typography className={"align-center"} style={{fontWeight: 'bold'}} variant="h6">
-          updated {(Number(((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0)) > 0 ? ((currentTimestamp - lastUpdateTimestamp) / 1000).toFixed(0) : 0) + ' seconds ago'}
+          updated {secondsAgo + ' seconds ago'}
         </Typography>
       </div>
       {portfolioOverviewData &&
