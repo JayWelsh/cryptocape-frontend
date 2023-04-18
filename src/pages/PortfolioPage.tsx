@@ -361,7 +361,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
       </div>
       <div className={classes.sectionSpacer}>
         <Typography className={"align-center"} style={{fontWeight: 'bold'}} variant="h6">
-          updated {secondsAgo} {secondsAgo === 1 ? 'second' : 'seconds'} ago
+          updated {secondsAgo} {secondsAgo === 1 ? 'second' : 'seconds'} ago 
         </Typography>
       </div>
       {portfolioOverviewData &&
