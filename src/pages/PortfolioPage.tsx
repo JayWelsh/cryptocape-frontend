@@ -29,6 +29,7 @@ import {
   ITimeseriesResponse,
   IPortfolioOverviewData,
   IBalancesCombinedResponse,
+  IETHDataResponse,
 } from '../interfaces';
 
 import { 
