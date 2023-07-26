@@ -29,6 +29,7 @@ import {
   ITimeseriesResponse,
   IPortfolioOverviewData,
   IBalancesCombinedResponse,
+  IETHDataResponse,
 } from '../interfaces';
 
 import { 
@@ -144,6 +145,9 @@ const PortfolioPage = (props: PropsFromRedux) => {
   const [portfolioAddresses, setPortfolioAddresses] = useState<string[]>([]);
   const [portfolioTimeseries, setPortfolioTimeseries] = useState<ITimeseriesEntry[]>([]);
   const [portfolioCurrentValue, setPortfolioCurrentValue] = useState<number | undefined>();
+
+  const [portfolioCurrentValueEth, setPortfolioCurrentValueEth] = useState<number | undefined>();
+
   const [portfolioOverviewData, setPortfolioOverviewData] = useState<IPortfolioOverviewData[]>([]);
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(new Date().getTime());
   const [currentTimestamp, setCurrentTimestamp] = useState(new Date().getTime());
@@ -167,11 +171,13 @@ const PortfolioPage = (props: PropsFromRedux) => {
         await Promise.all([
           fetch(`${API_ENDPOINT}/balances/combined?addresses=${addresses}`).then(resp => resp.json()),
           fetch(`${API_ENDPOINT}/history/account-value-snapshot?addresses=${addresses}`).then(resp => resp.json()),
+          fetch(`${API_ENDPOINT}/asset/ethereum/ETH`).then(resp => resp.json()),
         ]).then(async (data: any) => {
           console.log(data)
-          const [currentDataResponse, historicalDataResponse] = data;
+          const [currentDataResponse, historicalDataResponse, ethDataResponse] = data;
           const { data: currentData } : IBalancesCombinedResponse = currentDataResponse;
           const { data: historicalData } = historicalDataResponse;
+          const { data: ethData } : IETHDataResponse = ethDataResponse;
           let timeseriesData = historicalData.map((historicalEntry: ITimeseriesResponse) => ({
             value: Number(historicalEntry.value),
             date: historicalEntry.timestamp
@@ -226,7 +232,13 @@ const PortfolioPage = (props: PropsFromRedux) => {
               timeseriesData.push({
                 value: Number(currentData?.total),
                 date: new Date().toISOString(),
-              })
+              });
+              if(ethData?.last_price_usd) {
+                const ethValueInUSD = Number(ethData.last_price_usd);
+                const portfolioValueInUSD = Number(currentData.total);
+                const portfolioValueInETH = portfolioValueInUSD / ethValueInUSD;
+                setPortfolioCurrentValueEth(portfolioValueInETH);
+              }
             }
             setPortfolioTimeseries(timeseriesData);
             setLastUpdateTimestamp(new Date().getTime());
@@ -347,12 +359,17 @@ const PortfolioPage = (props: PropsFromRedux) => {
       }
       <div className={(isConsideredMobile || isConsideredMedium) ? classes.sectionSpacer : classes.topSpacer}>
         <div style={{width: '100%'}}>
-          <Card className={classes.cardContent} style={{overflowX: 'auto', ...(!portfolioCurrentValue && { height: getTitleFontBoxHeight(isConsideredMobile, isConsideredMedium)})}}>
-            {portfolioCurrentValue 
+          <Card className={classes.cardContent} style={{ overflowX: 'auto', ...(!portfolioCurrentValue && { height: getTitleFontBoxHeight(isConsideredMobile, isConsideredMedium)})}}>
+            {portfolioCurrentValue && portfolioCurrentValueEth
               ? 
-                <Typography style={{fontSize: getTitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h1">
-                  { priceFormat(portfolioCurrentValue, 2, '$') }
-                </Typography>
+                <div style={{textAlign: 'center'}}>
+                  <Typography style={{fontSize: getTitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h1">
+                    { priceFormat(portfolioCurrentValue, 2, '$') }
+                  </Typography>
+                  <Typography variant="h2">
+                    ~ { priceFormat(portfolioCurrentValueEth, 2, 'ETH', false)}
+                  </Typography>
+                </div>
               : 
                 <LoadingIconContainer height={getTitleLoadingIconHeight(isConsideredMobile, isConsideredMedium)}/>
             }

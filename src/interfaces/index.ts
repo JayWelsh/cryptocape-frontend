@@ -41,6 +41,14 @@ export interface IBalancesCombinedResponse {
     data: IBalancesCombinedResponseData
 }
 
+export interface IETHDataResponse {
+    data: IETHDataResponseData
+}
+
+export interface IETHDataResponseData {
+    last_price_usd: string;
+}
+
 export interface IPortfolioOverviewData {
     symbol: string;
     tokenPrice: number;
