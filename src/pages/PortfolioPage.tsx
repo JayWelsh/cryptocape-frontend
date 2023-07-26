@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
     topSpacer: {
       marginTop: theme.spacing(6),
     },
+    smallTopSpacer: {
+      marginTop: theme.spacing(1),
+    },
     sectionSpacer: {
       marginTop: theme.spacing(4),
     },
@@ -78,13 +81,22 @@ const getTitleFontSize = (isConsideredMobile: boolean, isConsideredMedium: boole
   return '7rem';
 }
 
+const getSubtitleFontSize = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
+  if(isConsideredMobile) {
+    return '1.25rem';
+  } else if(isConsideredMedium) {
+    return '2.75rem';
+  }
+  return '3.5rem';
+}
+
 const getTitleFontBoxHeight = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
   if(isConsideredMobile) {
-    return '104px';
+    return '136px';
   } else if(isConsideredMedium) {
-    return '141px';
+    return '202px';
   }
-  return '197px';
+  return '272px';
 }
 
 const getTitleLoadingIconHeight = (isConsideredMobile: boolean, isConsideredMedium: boolean) => {
@@ -366,7 +378,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
                   <Typography style={{fontSize: getTitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h1">
                     { priceFormat(portfolioCurrentValue, 2, '$') }
                   </Typography>
-                  <Typography variant="h2">
+                  <Typography className={classes.smallTopSpacer} style={{fontSize: getSubtitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h2">
                     ~ { priceFormat(portfolioCurrentValueEth, 2, 'ETH', false)}
                   </Typography>
                 </div>
