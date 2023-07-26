@@ -366,7 +366,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
           <Card className={classes.cardContent} style={{ overflowX: 'auto', ...(!portfolioCurrentValue && { height: getTitleFontBoxHeight(isConsideredMobile, isConsideredMedium)})}}>
             {portfolioCurrentValue && portfolioCurrentValueEth
               ? 
-                <div>
+                <div style={{textAlign: 'center'}}>
                   <Typography style={{fontSize: getTitleFontSize(isConsideredMobile, isConsideredMedium)}} variant="h1">
                     { priceFormat(portfolioCurrentValue, 2, '$') }
                   </Typography>
