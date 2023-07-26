@@ -232,13 +232,13 @@ const PortfolioPage = (props: PropsFromRedux) => {
               timeseriesData.push({
                 value: Number(currentData?.total),
                 date: new Date().toISOString(),
-              })
-            }
-            if(ethData?.last_price_usd) {
-              const ethValueInUSD = Number(ethData.last_price_usd);
-              const portfolioValueInUSD = Number(currentData.total);
-              const portfolioValueInETH = portfolioValueInUSD / ethValueInUSD;
-              setPortfolioCurrentValueEth(portfolioValueInETH);
+              });
+              if(ethData?.last_price_usd) {
+                const ethValueInUSD = Number(ethData.last_price_usd);
+                const portfolioValueInUSD = Number(currentData.total);
+                const portfolioValueInETH = portfolioValueInUSD / ethValueInUSD;
+                setPortfolioCurrentValueEth(portfolioValueInETH);
+              }
             }
             setPortfolioTimeseries(timeseriesData);
             setLastUpdateTimestamp(new Date().getTime());
