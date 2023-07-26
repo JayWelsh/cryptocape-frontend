@@ -239,10 +239,6 @@ const PortfolioPage = (props: PropsFromRedux) => {
               const portfolioValueInUSD = Number(currentData.total);
               const portfolioValueInETH = portfolioValueInUSD / ethValueInUSD;
               setPortfolioCurrentValueEth(portfolioValueInETH);
-              timeseriesData.push({
-                value: Number(ethData?.last_price_usd),
-                date: new Date().toISOString(),
-              })
             }
             setPortfolioTimeseries(timeseriesData);
             setLastUpdateTimestamp(new Date().getTime());
