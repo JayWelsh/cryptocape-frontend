@@ -85,7 +85,7 @@ const getSubtitleFontSize = (isConsideredMobile: boolean, isConsideredMedium: bo
   if(isConsideredMobile) {
     return '1.25rem';
   } else if(isConsideredMedium) {
-    return '2.75rem';
+    return '2.5rem';
   }
   return '3.5rem';
 }
