@@ -167,6 +167,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
   const [selectedPeriodHours, setSelectedPeriodHours] = useState(0);
   const [timeseriesHoursWorth, setTimeseriesHoursWorth] = useState(0);
   const [earliestSelectedIndex, setEarliestSelectedIndex] = useState(0);
+  const [groupBySymbol] = useState(true);
 
   let secondsSinceUpdate = Math.floor(currentTimestamp / 1000) - Math.floor(lastUpdateTimestamp / 1000);
 
@@ -205,7 +206,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
             tokenPriceChangePercent24Hr: 0,
             relativePortfolioValueChangePercent24Hr: 0,
           }
-          let newPortfolioOverviewData : IPortfolioOverviewData[] = Object.entries(currentData.assetAddressToValue).map(([tokenAddress, tokenDetails]) => {
+          let portfolioItems = Object.entries(currentData.assetAddressToValue).map(([tokenAddress, tokenDetails]) => {
             let tokenPriceField : number = Number(tokenDetails.token_price);
             let portfolioValueField : number = Number(tokenDetails.value);
             let marketCapField : number = Number(tokenDetails.market_cap_usd);
@@ -232,7 +233,46 @@ const PortfolioPage = (props: PropsFromRedux) => {
               tokenPriceChangePercent24Hr: tokenPriceChangePercent24HrField,
               relativePortfolioValueChangePercent24Hr: relativePortfolioValueChangePercent24HrField,
             }
-          })
+          });
+
+          let newPortfolioOverviewData: IPortfolioOverviewData[];
+
+          if (groupBySymbol) {
+            // Group items by symbol
+            const groupedBySymbol = portfolioItems.reduce((acc, item) => {
+              if (!acc[item.symbol]) {
+                acc[item.symbol] = {
+                  symbol: item.symbol,
+                  tokenPrice: 0,
+                  portfolioValue: 0,
+                  marketCap: 0,
+                  tokenQuantity: 0,
+                  portfolioPortion: 0,
+                  coingeckoId: item.coingeckoId,
+                  tokenPriceChangePercent24Hr: 0,
+                  relativePortfolioValueChangePercent24Hr: 0,
+                };
+              }
+              
+              const group = acc[item.symbol];
+              group.portfolioValue += item.portfolioValue;
+              group.marketCap += item.marketCap;
+              group.tokenQuantity += item.tokenQuantity;
+              group.portfolioPortion += item.portfolioPortion;
+              // For price and price changes, we'll use weighted averages based on portfolio value
+              const weight = item.portfolioValue / group.portfolioValue;
+              group.tokenPrice = (group.tokenPrice * (1 - weight)) + (item.tokenPrice * weight);
+              group.tokenPriceChangePercent24Hr = (group.tokenPriceChangePercent24Hr * (1 - weight)) + (item.tokenPriceChangePercent24Hr * weight);
+              group.relativePortfolioValueChangePercent24Hr += item.relativePortfolioValueChangePercent24Hr;
+              
+              return acc;
+            }, {} as Record<string, IPortfolioOverviewData>);
+
+            newPortfolioOverviewData = Object.values(groupedBySymbol);
+          } else {
+            newPortfolioOverviewData = portfolioItems;
+          }
+
           newPortfolioOverviewData.push(totalValues);
           let hoursWorthOfTimeseriesData = 0;
           if(timeseriesData?.length > 0) {
@@ -271,7 +311,7 @@ const PortfolioPage = (props: PropsFromRedux) => {
       isMounted = false;
       // setLoadingProgress(0);
     }
-  }, [addresses, fetchIndex])
+  }, [addresses, fetchIndex, groupBySymbol])
 
   useEffect(() => {
 

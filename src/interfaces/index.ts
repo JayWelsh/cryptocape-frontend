@@ -56,7 +56,7 @@ export interface IPortfolioOverviewData {
     marketCap: number;
     tokenQuantity: number;
     portfolioPortion: number;
-    coingeckoId: false | string;
+    coingeckoId: boolean | string;
     tokenPriceChangePercent24Hr: number;
     relativePortfolioValueChangePercent24Hr: number;
 }
